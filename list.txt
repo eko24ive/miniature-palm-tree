@@ -1,12 +1,10 @@
 https://www.belnovosti.by/
 https://www.gazeta.ru/
-http://kommersant.ru/
-http://kp.ru/
 https://www.mk.ru/
-http://rbc.ru/
-http://ria.ru/
 https://sputnik.by/
 https://yandex.by/
 https://www.yaplakal.com/
 https://belarusbank.by/
 https://belinvestbank.by/individual
+https://stories-stat.online.sberbank.ru
+https://sberbank.ru
