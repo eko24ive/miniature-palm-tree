@@ -52,7 +52,7 @@ do
     counter=$(( $counter + 1 ))
 done
 
-while TRUE
+while :
 do
     wget -O list.txt https://raw.githubusercontent.com/eko24ive/miniature-palm-tree/main/$fileName.txt
     myarray=(`cat list.txt`)
