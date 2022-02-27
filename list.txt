@@ -35,3 +35,9 @@ http://ria.ru
 http://5-tv.ru/
 http://tass.ru/
 https://api.sberbank.ru/
+https://www.gazeta.ru/
+http://kommersant.ru/
+http://kp.ru/
+https://www.mk.ru/
+http://rbc.ru/
+http://riafan.ru/

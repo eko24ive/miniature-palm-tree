@@ -48,7 +48,12 @@ do
     counter=0
     while [ $counter -lt $noofelements ]
     do
-        docker run --net=container:vpn -ti --rm -d alpine/bombardier -c 1000 -d $TIME -l ${myarray[$counter]} & sleep 60
+        docker run --net=container:vpn -ti --rm -d alpine/bombardier -c 1000 -d $TIME -l ${myarray[$counter]}
+        sleep 15
+        docker run --net=container:vpn -ti --rm -d alpine/bombardier -c 1000 -d $TIME -l ${myarray[$counter]}
+        sleep 15
+        docker run --net=container:vpn -ti --rm -d alpine/bombardier -c 1000 -d $TIME -l ${myarray[$counter]}
+        sleep 15
         counter=$(( $counter + 1 ))
     done
 done
