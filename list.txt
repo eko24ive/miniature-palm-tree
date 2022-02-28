@@ -1,4 +1,11 @@
-https://belarusbank.by/
-https://belinvestbank.by/individual
 https://sberbank.ru
 https://tinkoff.ru
+www.moex.com
+spbexchange.ru
+www.sberbank.ru
+broker.vtb.ru
+online.vtb.ru
+http://3dsec.sberbank.ru:443
+https://epa.api.vtb.ru
+https://belarusbank.by/
+https://belinvestbank.by/individual
