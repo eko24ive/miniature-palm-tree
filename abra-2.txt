@@ -47,7 +47,7 @@ docker run \
 --env PROTONVPN_USERNAME="$windscribeUserName" \
 --env PROTONVPN_PASSWORD="$windscribePassword" \
 --env PROTONVPN_TIER=0 \
---env PROTONVPN_SERVER=RU \
+--env PROTONVPN_SERVER=NL \
 ghcr.io/tprasadtp/protonvpn:latest
 
 #docker run --name vpn -e PUID=1000 -e PGID=1000 -e WINDSCRIBE_USERNAME=$windscribeUserName -e WINDSCRIBE_PASSWORD=$windscribePassword -e WINDSCRIBE_LOCATION=RU -e VPN_PORT=8080 --dns 8.8.8.8 --cap-add NET_ADMIN --restart unless-stopped -d wiorca/docker-windscribe
