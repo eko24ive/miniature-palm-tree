@@ -1,6 +1,6 @@
 #!/bin/bash -x
 
-TIME="30s"
+TIME="60s"
 
 while getopts 'u:p:f:' flag; do
   case "${flag}" in
@@ -53,10 +53,14 @@ do
     counter=0
     while [ $counter -lt $noofelements ]
     do
-      for v in 1 2 3 4 5 6 7 8 9
+      for v in 1 2 3 4 5 6 7 8
       do
         randVpn=${vpns[RANDOM%2]}
-        docker run --net=container:$randVpn -ti --rm -d alpine/bombardier -c 500 -d $TIME -l ${myarray[$counter]}
+        if [ "$(docker ps -f name=$randVpn | grep "\<unhealthy\>")" ]; then
+              docker restart $randVpn
+              sleep 10
+        fi
+        docker run --net=container:$randVpn -ti --rm -d alpine/bombardier -c 1000 -d $TIME -l ${myarray[$counter]}
         sleep 3
       done
     counter=$(( $counter + 1 ))
