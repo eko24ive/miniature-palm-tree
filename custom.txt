@@ -47,7 +47,7 @@ done
 
 while :
 do
-    wget -O list.txt https://raw.githubusercontent.com/eko24ive/miniature-palm-tree/main/$fileName.txt
+    wget -O list.txt $fileName
     myarray=(`cat list.txt`)
     noofelements=${#myarray[*]}
     counter=0
