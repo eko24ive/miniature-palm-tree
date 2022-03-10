@@ -61,13 +61,13 @@ do
 
     if [[ "$counterGroup" -eq 5 ]]; then
       counterGroup=0
-      docker run -net=container:vpn1 -it --rm portholeascend/mhddos_proxy${execCommand}
+      docker run --net=container:vpn1 -it --rm portholeascend/mhddos_proxy${execCommand}
       execCommand=""
     fi
 
     if [[ ${myarray[$counter]} == ${myarray[-1]} ]]; then
       counterGroup=0
-      docker run -net=container:vpn1 -it --rm portholeascend/mhddos_proxy${execCommand}
+      docker run --net=container:vpn1 -it --rm portholeascend/mhddos_proxy${execCommand}
       execCommand=""
     fi
   done
