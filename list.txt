@@ -1,7 +1,6 @@
-http://tass.ru/
-82.202.190.240:80
-82.202.190.240:443
-82.202.190.240:8010
-194.28.236.63:80
-194.28.236.63:443
-194.28.236.63:8444
+https://www.russianhighways.ru
+https://www.nornickel.com
+https://www.surgutneftegas.ru
+https://www.evraz.com
+https://www.nlmk.com
+https://www.metalloinvest.com
