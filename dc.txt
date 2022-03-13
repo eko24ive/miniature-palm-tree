@@ -70,7 +70,7 @@ do
     dockerName=${dockerName//[:]/_}
     dockerName=${dockerName%%/*}
 
-    docker run --name=${dockerName} --label co.elastic.logs/module=docker -it --rm -d mhddos_rv EVEN ${myarray[$counter]} 1 300 /app/$proxyFile.txt 200 3600 --debug
+    docker run --name=${dockerName} --label co.elastic.logs/module=docker -it --rm -d mhddos_rv EVEN ${myarray[$counter]} 1 50 /app/$proxyFile.txt 200 3600 --debug
     sleep 1m
     sleepTime=$(( $sleepTime - 1 ))
     counter=$(( $counter + 1 ))
