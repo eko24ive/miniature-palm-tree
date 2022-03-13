@@ -42,7 +42,7 @@ fi
 
 wget -O metricbeat.docker.yml https://raw.githubusercontent.com/eko24ive/miniature-palm-tree/main/metricbeat.docker.yml
 
-docker run -d --name=metricbeat \
+docker run -d --restart unless-stopped --name=metricbeat \
   --user=root \
   --volume="/root/metricbeat.docker.yml:/usr/share/metricbeat/metricbeat.yml:ro" \
   --volume="/var/run/docker.sock:/var/run/docker.sock:ro" \
