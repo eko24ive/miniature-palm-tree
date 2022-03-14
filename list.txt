@@ -1,2 +1,11 @@
-194.85.18.32
-194.85.18.31
+https://etpgpb.ru
+https://api.etpgpb.ru
+https://etp.gpb.ru/
+https://passport.etpgpb.ru
+https://gos.etpgpb.ru
+https://inter-rao.etpgpb.ru
+https://rosnedra.etpgpb.ru
+https://gpn.etpgpb.ru
+https://geh.etpgpb.ru
+https://trade.etpgpb.ru
+https://gb.etpgpb.ru
